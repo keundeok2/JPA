@@ -87,13 +87,36 @@ public class JpaMain {
             // em.find()에서 쿼리가 날아가지 않음 -> DB가 아니라 1차 캐시에서 데이터를 가져온 것
              */
 
+            /*
             Member findMember1 = em.find(Member.class, 100L);
             Member findMember2 = em.find(Member.class, 100L);
-
-            // 결과 -> 쿼리는 한번만 날아감
+            // 결과 -> 쿼리는 한번만 날아감 (findMember1을 가져올 때)
             // 첫 번째 find 에서는 DB에서 데이터를 갖고와서 1차 캐시에 저장
-            // 두 번째 find 에서는 1차 캐시에서 데이터를 가져옴
+            // 두 번째 find g에서는 1차 캐시에서 데이터를 가져옴
+            // findMember1 == findMember2 -> true!
 
+            tx.commit();
+             */
+
+
+            /*
+            em.persist(memberA);
+            em.persist(memberB);
+            // 여기까지는 Insert SQL을 DB에 보내지 않는다.
+
+            // 커밋하는 순간 SQL을 DB에 보낸다
+            tx.commit();
+             */
+
+            // update
+            Member findMember = em.find(Member.class, 101L);
+            findMember.setName("ZZZZ");
+
+            // commit() 에서 쿼리가 날아감
+            // 1차 캐시 안에 entity snapshot이 있는데 커밋 직전에 엔터티와 스냅샷을 비교하여
+            // 변경사항이 있으면 update 쿼리를 날린다.
+
+            tx.commit();
 
         } catch (Exception e) {
             tx.rollback();

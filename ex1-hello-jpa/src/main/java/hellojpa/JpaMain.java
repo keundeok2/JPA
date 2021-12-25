@@ -108,6 +108,7 @@ public class JpaMain {
             tx.commit();
              */
 
+            /*
             // update
             Member findMember = em.find(Member.class, 101L);
             findMember.setName("ZZZZ");
@@ -115,8 +116,53 @@ public class JpaMain {
             // commit() 에서 쿼리가 날아감
             // 1차 캐시 안에 entity snapshot이 있는데 커밋 직전에 엔터티와 스냅샷을 비교하여
             // 변경사항이 있으면 update 쿼리를 날린다.
+            // dirty checking
 
             tx.commit();
+             */
+
+            /*
+            // flush
+
+            Member member = new Member(200L, "hello");
+            em.persist(member);
+            em.flush(); // 직접 호출
+
+            System.out.println("========================");
+            // ======== 전에 쿼리가 날아감 (커밋 전에 쿼리가 날아감)
+
+            tx.commit();
+             */
+
+            /*
+            // detach
+            Member member = em.find(Member.class, 100L);
+            member.setName("ZZZZZZ");
+
+            em.detach(member);
+//            em.clear(); 영속성 컨텍스트 완전히 초기화
+            System.out.println("========================");
+
+            tx.commit();
+            // 결과 -> Select 쿼리만 날아가고 update 쿼리는 날아가지 않음
+            // member를 영속성 컨텍스트에서 분리하였기 때문에 (준영속 상태)
+            // 영속성 컨텍스트가 제공하는 기능을 사용할 수 없음 (dirty checking 하여 update query 전송)
+             */
+
+            // detach
+            Member member = em.find(Member.class, 100L);
+            em.clear();
+            Member member2 = em.find(Member.class, 100L);
+
+            System.out.println("========================");
+
+            tx.commit();
+
+            // 결과 -> === 이전에 select query가 두 번 실행된다.
+            // em.claer()로 영속성 컨텍스트 내의 데이터를 모두 detach 하였기 때문임
+
+
+
 
         } catch (Exception e) {
             tx.rollback();

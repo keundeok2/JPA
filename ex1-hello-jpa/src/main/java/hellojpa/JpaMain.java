@@ -149,6 +149,7 @@ public class JpaMain {
             // 영속성 컨텍스트가 제공하는 기능을 사용할 수 없음 (dirty checking 하여 update query 전송)
              */
 
+            /*
             // detach
             Member member = em.find(Member.class, 100L);
             em.clear();
@@ -161,6 +162,7 @@ public class JpaMain {
             // 결과 -> === 이전에 select query가 두 번 실행된다.
             // em.claer()로 영속성 컨텍스트 내의 데이터를 모두 detach 하였기 때문임
 
+             */
 
 
 

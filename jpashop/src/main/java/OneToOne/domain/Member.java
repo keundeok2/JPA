@@ -1,4 +1,4 @@
-package memberteam.domain;
+package OneToOne.domain;
 
 import javax.persistence.*;
 
@@ -12,12 +12,10 @@ public class Member {
     @Column(name = "USERNAME")
     private String username;
 
-//    @Column(name ="TEAM_ID")
-//    private Long teamId;
+    @OneToOne
+    @JoinColumn(name = "LOCKER_ID")
+    private Locker locker;
 
-    @ManyToOne // MEMBER : TEAM = N : 1
-    @JoinColumn(name = "TEAM_ID")
-    private Team team;
 
     public Long getId() {
         return id;
@@ -35,16 +33,11 @@ public class Member {
         this.username = username;
     }
 
-    public Team getTeam() {
-        return team;
+    public Locker getLocker() {
+        return locker;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
-    public void changeTeam(Team team) {
-        this.team = team;
-        team.getMembers().add(this);
+    public void setLocker(Locker locker) {
+        this.locker = locker;
     }
 }

@@ -1,4 +1,4 @@
-package memberteam.domain;
+package OneToMany.domain;
 
 import javax.persistence.*;
 
@@ -12,11 +12,8 @@ public class Member {
     @Column(name = "USERNAME")
     private String username;
 
-//    @Column(name ="TEAM_ID")
-//    private Long teamId;
-
-    @ManyToOne // MEMBER : TEAM = N : 1
-    @JoinColumn(name = "TEAM_ID")
+    @ManyToOne
+    @JoinColumn(name = "TEAM_ID", insertable = false, updatable = false)
     private Team team;
 
     public Long getId() {
@@ -33,18 +30,5 @@ public class Member {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
-    public void changeTeam(Team team) {
-        this.team = team;
-        team.getMembers().add(this);
     }
 }

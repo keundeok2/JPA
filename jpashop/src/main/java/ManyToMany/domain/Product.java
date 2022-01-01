@@ -1,29 +1,22 @@
-package memberteam.domain;
+package ManyToMany.domain;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import java.util.ArrayList;
 import java.util.List;
 
 //@Entity
-public class Team {
+public class Product {
 
     @Id @GeneratedValue
-    @Column(name = "TEAM_ID")
     private Long id;
 
     private String name;
 
-    // mappedBy -> 자신과 연결되는 객체에서 어느 변수와 맵핑되어있는 지 작성
-    @OneToMany(mappedBy = "team")
+    @ManyToMany(mappedBy = "products")
     private List<Member> members = new ArrayList<>();
-
-    public List<Member> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<Member> members) {
-        this.members = members;
-    }
 
     public Long getId() {
         return id;

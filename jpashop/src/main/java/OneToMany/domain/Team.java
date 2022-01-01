@@ -1,4 +1,4 @@
-package memberteam.domain;
+package OneToMany.domain;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,19 +11,12 @@ public class Team {
     @Column(name = "TEAM_ID")
     private Long id;
 
+    @Column(name = "NAME")
     private String name;
 
-    // mappedBy -> 자신과 연결되는 객체에서 어느 변수와 맵핑되어있는 지 작성
-    @OneToMany(mappedBy = "team")
+    @OneToMany
+    @JoinColumn(name = "TEAM_ID") // Member 테이블의 TEAM_ID를 관리한다. (연관관계의 주인)
     private List<Member> members = new ArrayList<>();
-
-    public List<Member> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<Member> members) {
-        this.members = members;
-    }
 
     public Long getId() {
         return id;
@@ -39,5 +32,13 @@ public class Team {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Member> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<Member> members) {
+        this.members = members;
     }
 }

@@ -1,9 +1,9 @@
-package advanced.mappedbysuperclass.domain;
+package proxy.domain;
 
 import javax.persistence.*;
 
-//@Entity
-public class Member extends BaseEntity {
+@Entity
+public class Member {
 
     @Id @GeneratedValue
     @Column(name = "MEMBER_ID")
@@ -11,9 +11,6 @@ public class Member extends BaseEntity {
 
     @Column(name = "USERNAME")
     private String username;
-
-//    @Column(name ="TEAM_ID")
-//    private Long teamId;
 
     @ManyToOne // MEMBER : TEAM = N : 1
     @JoinColumn(name = "TEAM_ID")

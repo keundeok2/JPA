@@ -1,4 +1,4 @@
-package proxy.domain;
+package fetch.domain;
 
 import javax.persistence.*;
 
@@ -12,10 +12,8 @@ public class Member {
     @Column(name = "USERNAME")
     private String username;
 
-//    @Column(name ="TEAM_ID")
-//    private Long teamId;
-
-    @ManyToOne // MEMBER : TEAM = N : 1
+    @ManyToOne(fetch = FetchType.LAZY)
+//    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "TEAM_ID")
     private Team team;
 

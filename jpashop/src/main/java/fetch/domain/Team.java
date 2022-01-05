@@ -1,4 +1,4 @@
-package proxy.domain;
+package fetch.domain;
 
 import javax.persistence.*;
 import java.util.ArrayList;

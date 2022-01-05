@@ -1,5 +1,6 @@
 package proxy;
 
+import org.hibernate.Hibernate;
 import proxy.domain.Member;
 
 import javax.persistence.EntityManager;
@@ -93,6 +94,7 @@ public class Main {
 
             }
 
+            /*
             {
                 // 엔터티가 준영속 상태일 때 프록시를 초기화하면 예외가 발생한다
 
@@ -113,8 +115,31 @@ public class Main {
                 refMember.getUsername();
 
             }
+             */
 
-            tx.commit();
+            {
+                // 프록시 상태 확인 및 제어
+                Member member = new Member();
+                member.setUsername("hello");
+
+                em.persist(member);
+
+                em.flush();
+                em.clear();
+
+                Member m1 = em.getReference(Member.class, member.getId());
+                // 프록시 인스턴스 초기화 여부 확인
+                System.out.println("isLoaded: "+entityManagerFactory.getPersistenceUnitUtil().isLoaded(m1));;
+
+                // 프록시 클래스 확인
+                System.out.println("proxy: " + m1.getClass());
+
+                // 프록시 강제 초기화 (Insert 쿼리 호출)
+                Hibernate.initialize(m1);
+
+            }
+
+           tx.commit();
         } catch (Exception e) {
             tx.rollback();
             System.out.println("==== error ====");

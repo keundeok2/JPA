@@ -3,7 +3,7 @@ package valuetype.embedded.domain;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
+//@Entity
 public class Member {
 
     @Id @GeneratedValue

@@ -61,7 +61,7 @@ public class Main {
                 findMember.getFavoriteFoods().add("한식");
 
                 // addressHistory: old1 -> newCity1
-                // 내부의 값이 같은 인스턴스로 삭제할 row를 찾는다.
+                // 내부의 값이 같은 인스턴스로 삭제할 row를 찾는다. -> equals(), hashCode() 오버라이딩해야 한다.
                 findMember.getAddressHistory().remove(new Address("old1", "oldstreet1", "100111"));
                 findMember.getAddressHistory().add(new Address("newCity1", "newstreet1", "100111"));
                 // 결과 -> 모든 row를 delete하고 남은 값을 다시 insert한다.

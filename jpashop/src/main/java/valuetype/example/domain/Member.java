@@ -1,21 +1,21 @@
-package valuetype.collection.domain;
+package valuetype.example.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 //@Entity
-@Table(name = "ADDRESS")
-public class AddressEntity {
+public class Member {
 
     @Id @GeneratedValue
-    @Column(name = "address_id")
+    @Column(name = "MEMBER_ID")
     private Long id;
 
     @Embedded
     private Address address;
 
-    public AddressEntity(String city, String street, String zipcode) {
-        this.address = new Address(city, street, zipcode);
-    }
+    @OneToMany(mappedBy = "member")
+    private List<Order> orders = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -31,5 +31,13 @@ public class AddressEntity {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 }

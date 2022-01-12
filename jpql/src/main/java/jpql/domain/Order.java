@@ -11,7 +11,7 @@ public class Order {
     private int orderAmount;
 
     @Embedded
-    private Address addres;
+    private Address address;
 
     @ManyToOne
     @JoinColumn(name = "PRODUCT_ID")
@@ -33,12 +33,12 @@ public class Order {
         this.orderAmount = orderAmount;
     }
 
-    public Address getAddres() {
-        return addres;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setAddres(Address addres) {
-        this.addres = addres;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public Product getProduct() {

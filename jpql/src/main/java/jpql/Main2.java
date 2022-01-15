@@ -76,10 +76,6 @@ public class Main2 {
             // 묵시적 조인은 오로지 내부 조인. 외부 조인 불가능
 
 
-
-
-
-
             tx.commit();
         } catch (Exception e) {
             System.out.println("=======error========");

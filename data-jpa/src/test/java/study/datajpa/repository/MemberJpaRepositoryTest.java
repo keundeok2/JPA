@@ -31,7 +31,7 @@ class MemberJpaRepositoryTest {
         assertThat(findMember).isEqualTo(member); // findMember == member가 실행된 것 equals(), hashCode() ㄴㄴ
     }
 
-    @Test
+//    @Test
     void basicCRUD() {
         Member member1 = new Member("member1");
         Member member2 = new Member("member2");
@@ -62,5 +62,33 @@ class MemberJpaRepositoryTest {
 
     }
 
+
+//    @Test
+    void findByUsernameAndAgeGreaterThen() {
+        Member memberA = new Member("member", 10, null);
+        Member memberB = new Member("member", 20, null);
+        memberJpaRepository.save(memberA);
+        memberJpaRepository.save(memberB);
+
+        List<Member> result = memberJpaRepository.findByUsernameAndAgeGreaterThen("member", 15);
+
+        assertThat(result.get(0).getUsername()).isEqualTo("member");
+        assertThat(result.get(0).getAge()).isGreaterThan(15);
+        assertThat(result.size()).isEqualTo(1);
+    }
+
+    @Test
+    void namedQuery() {
+        Member member1 = new Member("AAA");
+        Member member2 = new Member("BBB");
+
+        memberJpaRepository.save(member1);
+        memberJpaRepository.save(member2);
+
+        List<Member> members = memberJpaRepository.findByUsername("AAA");
+
+        assertThat(members.get(0).getUsername()).isEqualTo("AAA");
+
+    }
 
 }

@@ -1,6 +1,5 @@
 package study.datajpa.repository;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +10,6 @@ import study.datajpa.entity.Member;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -20,7 +18,7 @@ class MemberRepositoryTest {
 
     @Autowired MemberRepository memberRepository;
 
-    @Test
+//    @Test
     void testMember() {
         System.out.println(memberRepository.getClass());
         Member member = new Member("memberA");
@@ -34,7 +32,7 @@ class MemberRepositoryTest {
 
     }
 
-    @Test
+//    @Test
     void basicCRUD() {
         Member member1 = new Member("member1");
         Member member2 = new Member("member2");
@@ -66,6 +64,33 @@ class MemberRepositoryTest {
 
     }
 
+    @Test
+    void findByUsernameAndAgeGreaterThen() {
+        Member memberA = new Member("member", 10, null);
+        Member memberB = new Member("member", 20, null);
+        memberRepository.save(memberA);
+        memberRepository.save(memberB);
+
+        List<Member> result = memberRepository.findByUsernameAndAgeGreaterThan("member", 15);
+
+        assertThat(result.get(0).getUsername()).isEqualTo("member");
+        assertThat(result.get(0).getAge()).isGreaterThan(15);
+        assertThat(result.size()).isEqualTo(1);
+    }
+
+    @Test
+    void namedQuery() {
+        Member member1 = new Member("AAA");
+        Member member2 = new Member("BBB");
+
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<Member> members = memberRepository.findByUsername("AAA");
+
+        assertThat(members.get(0).getUsername()).isEqualTo("AAA");
+
+    }
 
 
 }

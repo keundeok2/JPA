@@ -11,6 +11,7 @@ import study.datajpa.entity.Member;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -77,7 +78,7 @@ class MemberJpaRepositoryTest {
         assertThat(result.size()).isEqualTo(1);
     }
 
-    @Test
+//    @Test
     void namedQuery() {
         Member member1 = new Member("AAA");
         Member member2 = new Member("BBB");
@@ -89,6 +90,27 @@ class MemberJpaRepositoryTest {
 
         assertThat(members.get(0).getUsername()).isEqualTo("AAA");
 
+    }
+
+    @Test
+    void paging() {
+        memberJpaRepository.save(new Member("member1", 10, null));
+        memberJpaRepository.save(new Member("member2", 10, null));
+        memberJpaRepository.save(new Member("member3", 10, null));
+        memberJpaRepository.save(new Member("member4", 10, null));
+        memberJpaRepository.save(new Member("member5", 10, null));
+
+        int age = 10;
+        int offset = 0;
+        int limit = 3;
+
+        //when
+        List<Member> members = memberJpaRepository.findByPage(age, offset, limit);
+        long totalCount = memberJpaRepository.totalCount(age);
+
+        //then
+        assertThat(members.size()).isEqualTo(3);
+        assertThat(totalCount).isEqualTo(5);
     }
 
 }

@@ -1,5 +1,8 @@
 package study.datajpa.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,5 +39,14 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findListByUsername(String username);
     Member findMemberByUsername(String username);
     Optional<Member> findOptionalByUsername(String username);
+
+    // count 쿼리 분리
+    @Query(value = "select m from Member m left join m.team t"
+            ,countQuery = "select count(m.username) from Member m")
+    Page<Member> findByAge(int age, Pageable pageable);
+
+//    Slice<Member> findByAge(int age, Pageable pageable);
+    // 반환타입을 List로 받을 수 있다. 원하는 갯수만 가져올 뿐 Pageable 기능은 사용하지 못한다.
+//    List<Member> findByAge(int age, Pageable pageable);
 
 }

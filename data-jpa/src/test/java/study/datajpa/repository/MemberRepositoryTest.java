@@ -3,6 +3,10 @@ package study.datajpa.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
@@ -189,6 +193,57 @@ class MemberRepositoryTest {
 
         Optional<Member> opt = memberRepository.findOptionalByUsername("asdf");
         System.out.println("opt = " + opt); // Optional.empty
+
+    }
+
+    @Test
+    void paging() {
+        memberRepository.save(new Member("member1", 10, null));
+        memberRepository.save(new Member("member2", 10, null));
+        memberRepository.save(new Member("member3", 10, null));
+        memberRepository.save(new Member("member4", 10, null));
+        memberRepository.save(new Member("member5", 10, null));
+
+        int age = 10;
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
+
+        // Page
+        //when
+        // 반환타입 Page: totalCount 쿼리 호출, Slice: 호출 X
+        Page<Member> page = memberRepository.findByAge(age, pageRequest);
+
+        // 엔터티 -> dto 변환
+        Page<MemberDto> toMap = page.map(member -> new MemberDto(member.getId(), member.getUsername(), null));
+
+        //then
+        List<Member> content = page.getContent();
+        long totalElements = page.getTotalElements(); // 5
+        int totalPages = page.getTotalPages(); // 2
+        for (Member member : content) {
+            System.out.println("member = " + member);
+        }
+
+        assertThat(content.size()).isEqualTo(3);
+        assertThat(page.getTotalElements()).isEqualTo(5);
+        assertThat(page.getTotalPages()).isEqualTo(2);
+        assertThat(page.getNumber()).isEqualTo(0);
+        assertThat(page.isFirst()).isTrue();
+        assertThat(page.hasNext()).isTrue();
+
+        /*
+        // Slice
+        // totalCount 쿼리를 호출하지않고 갯수를 하나 더 조회한다.
+        Slice<Member> page = memberRepository.findByAge(age, pageRequest);
+        List<Member> content = page.getContent();
+
+
+        assertThat(content.size()).isEqualTo(3);
+//        assertThat(page.getTotalElements()).isEqualTo(5);
+//        assertThat(page.getTotalPages()).isEqualTo(2);
+        assertThat(page.getNumber()).isEqualTo(0);
+        assertThat(page.isFirst()).isTrue();
+        assertThat(page.hasNext()).isTrue();
+         */
 
     }
 

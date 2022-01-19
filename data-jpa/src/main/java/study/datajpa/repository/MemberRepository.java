@@ -3,6 +3,7 @@ package study.datajpa.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -53,4 +54,28 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Modifying(clearAutomatically = true) // executeUpdate() 실행
     @Query("update Member m set m.age = m.age + 1 where m.age >= :age")
     int bulkAgePlus(@Param("age") int age);
+
+    @Query("select m from Member m left join fetch m.team")
+    List<Member> findMemberFetchJoin();
+
+    // JpaRepository.findAll을 Override 하여 정의할 수도 있음
+    // @EntityGraph는 fetch join을 실행시킨다.
+    // attributePaths 속성의 값으로 fetch join 할 엔터티의 필드명
+    @Override
+    @EntityGraph(attributePaths = {"team"})
+    List<Member> findAll();
+
+    // @Query로 정의된 쿼리에도 @EntityGraph 사용가능
+    @EntityGraph(attributePaths = {"team"})
+    @Query("select m from Member m")
+    List<Member> findMemberEntityGraph();
+
+    // 메서드 명으로 만들어진 쿼리에도 @EntityGraph 사용가능
+//    @EntityGraph(attributePaths = {"team"})
+    @EntityGraph("Member.all") // Member의 @NamedEntityGraph 사용
+    List<Member> findEntityGraphMemberByUsername(@Param("username") String username);
+    // -> @EntityGraph는 fetch join을 대신해주는 역할이다.
+    // 간단한 쿼리에는 @EntityGraph를 사용하고, 복잡한 쿼리는 JPQL에서 fetch join을 사용하자
+
+
 }

@@ -251,7 +251,7 @@ class MemberRepositoryTest {
 
     }
 
-    @Test
+//    @Test
     void bulkUpdate() {
         memberRepository.save(new Member("member1", 10, null));
         memberRepository.save(new Member("member2", 19, null));
@@ -279,7 +279,60 @@ class MemberRepositoryTest {
         assertThat(resultCount).isEqualTo(3);
     }
 
+//    @Test
+    void fetchJoin() {
+        Team teamA = new Team("teamA");
+        teamRepository.save(teamA);
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamB);
+        memberRepository.save(new Member("member1", 10, teamA));
+        memberRepository.save(new Member("member2", 19, teamB));
 
+        //when
+        List<Member> result = memberRepository.findMemberFetchJoin();
+
+        for (Member member : result) {
+            System.out.println("member = " + member);
+            System.out.println("member.teamClass = " + member.getTeam().getClass());
+            System.out.println("member.getTeam() = " + member.getTeam());
+        }
+    }
+
+//    @Test
+    void entityGraph() {
+        Team teamA = new Team("teamA");
+        teamRepository.save(teamA);
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamB);
+        memberRepository.save(new Member("member1", 10, teamA));
+        memberRepository.save(new Member("member2", 19, teamB));
+
+        List<Member> result = memberRepository.findAll();
+        for (Member member : result) {
+            System.out.println("member = " + member);
+            System.out.println("member.teamClass = " + member.getTeam().getClass());
+            System.out.println("member.getTeam() = " + member.getTeam());
+        }
+
+    }
+
+    @Test
+    void entityGraph2() {
+        Team teamA = new Team("teamA");
+        teamRepository.save(teamA);
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamB);
+        memberRepository.save(new Member("member1", 10, teamA));
+        memberRepository.save(new Member("member2", 19, teamB));
+
+//        List<Member> result = memberRepository.findAll();
+        List<Member> result = memberRepository.findEntityGraphMemberByUsername("member1");
+        for (Member member : result) {
+            System.out.println("member = " + member);
+            System.out.println("member.teamClass = " + member.getTeam().getClass());
+            System.out.println("member.getTeam() = " + member.getTeam());
+        }
+    }
 
 
 }

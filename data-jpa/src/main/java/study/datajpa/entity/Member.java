@@ -13,6 +13,7 @@ import javax.persistence.*;
         name = "Member.findByUsername",
         query = "select m from Member m where m.username = :username"
 )
+@NamedEntityGraph(name = "Member.all", attributeNodes = @NamedAttributeNode("team"))
 public class Member {
 
     // 엔터티는 기본 생성자가 존재해야함. protected 까지만 JPA가 접근할 수 있다. JPA 스펙에 명시되어있음

@@ -13,6 +13,8 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,8 @@ class MemberRepositoryTest {
 
     @Autowired MemberRepository memberRepository;
     @Autowired TeamRepository teamRepository;
+    @PersistenceContext
+    EntityManager em;
 
 //    @Test
     void testMember() {
@@ -196,7 +200,7 @@ class MemberRepositoryTest {
 
     }
 
-    @Test
+//    @Test
     void paging() {
         memberRepository.save(new Member("member1", 10, null));
         memberRepository.save(new Member("member2", 10, null));
@@ -246,5 +250,36 @@ class MemberRepositoryTest {
          */
 
     }
+
+    @Test
+    void bulkUpdate() {
+        memberRepository.save(new Member("member1", 10, null));
+        memberRepository.save(new Member("member2", 19, null));
+        memberRepository.save(new Member("member3", 20, null));
+        memberRepository.save(new Member("member4", 21, null));
+        memberRepository.save(new Member("member5", 40, null));
+
+        //when
+        int resultCount = memberRepository.bulkAgePlus(20);
+
+        // -> 벌크성 쿼리는 DB에 바로 SQL을 실행시킨다.
+        // 영속성 컨텍스트에는 반영되지 않는다.
+        List<Member> result = memberRepository.findByUsername("member5");
+        Member member5 = result.get(0);
+        System.out.println("member5 = " + member5); // age = 40
+
+        // -> 따라서 벌크성 쿼리 실행 후 영속성 컨텍스트를 clear 해야한다.
+        em.clear(); // repository의 @Modifying 애너테이션의 clearAutomatically=true 로 설정하면 자동으로 영속성 컨텍스트를 clear한다
+
+        List<Member> result2 = memberRepository.findByUsername("member5");
+        Member member25 = result2.get(0);
+        System.out.println("member25 = " + member25); // age = 41
+
+        //then
+        assertThat(resultCount).isEqualTo(3);
+    }
+
+
+
 
 }

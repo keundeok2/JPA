@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
@@ -49,4 +50,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 반환타입을 List로 받을 수 있다. 원하는 갯수만 가져올 뿐 Pageable 기능은 사용하지 못한다.
 //    List<Member> findByAge(int age, Pageable pageable);
 
+    @Modifying(clearAutomatically = true) // executeUpdate() 실행
+    @Query("update Member m set m.age = m.age + 1 where m.age >= :age")
+    int bulkAgePlus(@Param("age") int age);
 }

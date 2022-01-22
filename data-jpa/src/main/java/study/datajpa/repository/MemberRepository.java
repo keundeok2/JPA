@@ -3,19 +3,18 @@ package study.datajpa.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 
+import javax.persistence.LockModeType;
+import javax.persistence.QueryHint;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom {
 
     List<Member> findByUsernameAndAgeGreaterThan(String username, int age);
 
@@ -77,5 +76,12 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // -> @EntityGraph는 fetch join을 대신해주는 역할이다.
     // 간단한 쿼리에는 @EntityGraph를 사용하고, 복잡한 쿼리는 JPQL에서 fetch join을 사용하자
 
+    // readOnly로 데이터 조회
+    @QueryHints(
+            @QueryHint(name = "org.hibernate.readOnly", value = "true")
+    )
+    Member findReadOnlyByUsername(String username);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<Member> findLockByUsername(String username);
 }

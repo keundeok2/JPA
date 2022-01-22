@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import study.datajpa.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,7 +22,9 @@ class MemberTest {
     @PersistenceContext
     private EntityManager em;
 
-    @Test
+    @Autowired private MemberRepository memberRepository;
+
+//    @Test
     void testEntity() {
         Team teamA = new Team("teamA");
         Team teamB = new Team("teamB");
@@ -47,9 +50,22 @@ class MemberTest {
             System.out.println("--> member.getTeam() = " + member.getTeam());
         }
 
-
     }
 
+    @Test
+    void baseTest() throws Exception {
+        // given
+        Member member1 = new Member("member1");
+        memberRepository.save(member1); // @prePersist
+        // when
+        List<Member> result = memberRepository.findAll();
+        for (Member member : result) {
+            System.out.println("member.getCreatedDate() = " + member.getCreatedDate());
+            System.out.println("member.getLastModifiedDate() = " + member.getLastModifiedDate());
+            System.out.println("member.getCreatedBy() = " + member.getCreatedBy());
+            System.out.println("member.getLastModifiedBy() = " + member.getLastModifiedBy());
+        }
 
+    }
 
 }

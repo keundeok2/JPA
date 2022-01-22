@@ -28,6 +28,7 @@ class MemberRepositoryTest {
 
     @Autowired MemberRepository memberRepository;
     @Autowired TeamRepository teamRepository;
+    @Autowired MemberQueryRepository memberQueryRepository;
     @PersistenceContext
     EntityManager em;
 
@@ -168,7 +169,7 @@ class MemberRepositoryTest {
 
     }
 
-    @Test
+//    @Test
     void returnType() {
         Member member1 = new Member("AAA", 10, null);
         Member member2 = new Member("BBB", 20, null);
@@ -316,7 +317,7 @@ class MemberRepositoryTest {
 
     }
 
-    @Test
+//    @Test
     void entityGraph2() {
         Team teamA = new Team("teamA");
         teamRepository.save(teamA);
@@ -331,6 +332,61 @@ class MemberRepositoryTest {
             System.out.println("member = " + member);
             System.out.println("member.teamClass = " + member.getTeam().getClass());
             System.out.println("member.getTeam() = " + member.getTeam());
+        }
+    }
+
+//    @Test
+    void queryHint() {
+        // given
+        Member member1 = new Member("member1");
+        memberRepository.save(member1);
+        em.flush();
+        em.clear();
+
+        //when
+        /*
+        Member findMember = memberRepository.findById(member1.getId()).get();
+        findMember.setUsername("newUsername"); // 변경감지 동작 -> update query 실행
+
+        em.flush();
+         */
+
+        System.out.println("===========================");
+        Member readOnlyByUsername = memberRepository.findReadOnlyByUsername(member1.getUsername());
+        // 내부적으로 snapshot을 만들지 않음 -> 읽기 전용 -> 변경감지 동작X
+        readOnlyByUsername.setUsername("newUsername"); // update query 실행 X
+
+        em.flush();
+
+    }
+
+//    @Test
+    void lock() {
+        // given
+        Member member1 = new Member("member1");
+        memberRepository.save(member1);
+        em.flush();
+        em.clear();
+
+        //when
+        List<Member> result = memberRepository.findLockByUsername(member1.getUsername());
+        // -> select ~ for update 쿼리 실행
+        // lock에 관해서는 더 찾아보기
+        em.flush();
+
+    }
+
+//    @Test
+    void extendsTest() {
+        Member member1 = new Member("member1");
+        memberRepository.save(member1);
+
+        em.flush();
+        em.clear();
+
+        List<Member> result = memberRepository.findMemberCustom();
+        for (Member member : result) {
+            System.out.println("member = " + member);
         }
     }
 

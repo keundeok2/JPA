@@ -1,8 +1,11 @@
 package study.datajpa.entity;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.repository.MemberRepository;
@@ -12,6 +15,7 @@ import javax.persistence.PersistenceContext;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -52,7 +56,7 @@ class MemberTest {
 
     }
 
-    @Test
+//    @Test
     void baseTest() throws Exception {
         // given
         Member member1 = new Member("member1");
@@ -65,6 +69,38 @@ class MemberTest {
             System.out.println("member.getCreatedBy() = " + member.getCreatedBy());
             System.out.println("member.getLastModifiedBy() = " + member.getLastModifiedBy());
         }
+
+    }
+
+
+    @Test
+    public void queryByExample() {
+        //given
+        Team team = new Team("teamA");
+        em.persist(team);
+
+        Member m1 = new Member("m1", 0, team);
+        Member m2 = new Member("m2", 0, team);
+        em.persist(m1);
+        em.persist(m2);
+
+        em.flush();
+        em.clear();
+
+        //when
+        //Probe 생성
+        Member member = new Member("m1");
+        Team teamA = new Team("teamA");
+        member.setTeam(teamA);
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnorePaths("age"); // 검색조건에 age 제거
+
+        Example<Member> example = Example.of(member, matcher);// 검색조건을 엔터티 객체로 생성
+
+        List<Member> result = memberRepository.findAll(example); // JpaRepository에 정의된 메서드
+
+        assertThat(result.get(0).getUsername()).isEqualTo("m1");
 
     }
 

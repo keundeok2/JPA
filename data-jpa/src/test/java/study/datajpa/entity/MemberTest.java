@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-import study.datajpa.repository.MemberRepository;
+import study.datajpa.repository.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -73,7 +75,7 @@ class MemberTest {
     }
 
 
-    @Test
+//    @Test
     public void queryByExample() {
         //given
         Team team = new Team("teamA");
@@ -101,6 +103,113 @@ class MemberTest {
         List<Member> result = memberRepository.findAll(example); // JpaRepository에 정의된 메서드
 
         assertThat(result.get(0).getUsername()).isEqualTo("m1");
+
+    }
+
+//    @Test
+    void projections() {
+        //given
+        Team teamA = new Team("teamA");
+        em.persist(teamA);
+
+        Member m1 = new Member("m1", 0, teamA);
+        Member m2 = new Member("m2", 0, teamA);
+        em.persist(m1);
+        em.persist(m2);
+
+        em.flush();
+        em.clear();
+
+        //when
+        /*
+        List<UsernameOnly> result = memberRepository.findProjectionsByUsername("m1");
+        for (UsernameOnly usernameOnly : result) {
+            System.out.println("usernameOnly = " + usernameOnly.getUsername());
+        }
+         */
+
+        /*
+        List<UsernameOnlyDto> result = memberRepository.findProjectionsDtoByUsername("m1");
+        for (UsernameOnlyDto usernameOnlyDto : result) {
+            System.out.println("usernameOnlyDto = " + usernameOnlyDto.getUsername());
+        }
+         */
+
+        /*
+        List<UsernameOnlyDto> result = memberRepository.findProjectionsGenericByUsername("m1", UsernameOnlyDto.class);
+        for (UsernameOnlyDto usernameOnlyDto : result) {
+            System.out.println("usernameOnlyDto = " + usernameOnlyDto.getUsername());
+        }
+         */
+
+        List<NestedClosedProjections> result = memberRepository.findProjectionsGenericByUsername("m1", NestedClosedProjections.class);
+        for (NestedClosedProjections nestedClosedProjections : result) {
+            System.out.println("nestedClosedProjections.getUsername() = " + nestedClosedProjections.getUsername());
+            System.out.println("nestedClosedProjections.getTeam() = " + nestedClosedProjections.getTeam());
+        }
+        /* 실행 쿼리
+            select
+                member0_.username as col_0_0_,
+                team1_.team_id as col_1_0_,
+                team1_.team_id as team_id1_1_,
+                team1_.created_date as created_2_1_,
+                team1_.updated_date as updated_3_1_,
+                team1_.name as name4_1_
+            from
+                member member0_
+            left outer join
+                team team1_
+                    on member0_.team_id=team1_.team_id
+            where
+                member0_.username=?
+
+            -> 연관 엔터티는 데이터 전체를 조회한다.
+         */
+
+    }
+
+//    @Test
+    void nativeQuery() {
+        //given
+        Team teamA = new Team("teamA");
+        em.persist(teamA);
+
+        Member m1 = new Member("m1", 0, teamA);
+        Member m2 = new Member("m2", 0, teamA);
+        em.persist(m1);
+        em.persist(m2);
+
+        em.flush();
+        em.clear();
+
+        //when
+        Member result = memberRepository.findByNativeQuery("m1");
+        System.out.println("result = " + result);
+    }
+
+    @Test
+    void nativeProjection() {
+        //given
+        Team teamA = new Team("teamA");
+        em.persist(teamA);
+
+        Member m1 = new Member("m1", 0, teamA);
+        Member m2 = new Member("m2", 0, teamA);
+        em.persist(m1);
+        em.persist(m2);
+
+        em.flush();
+        em.clear();
+
+        //when
+        Page<MemberProjection> result = memberRepository.findByNativeProjection(PageRequest.of(0, 10));
+        List<MemberProjection> content = result.getContent();
+        for (MemberProjection memberProjection : content) {
+            System.out.println("memberProjection = " + memberProjection.getUsername());
+            System.out.println("memberProjection.getId() = " + memberProjection.getId());
+            System.out.println("memberProjection.getTeamName() = " + memberProjection.getTeamName());
+        }
+
 
     }
 

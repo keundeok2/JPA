@@ -34,5 +34,4 @@ public class MemberController {
         return memberRepository.searchPageComplex(condition, pageable);
     }
 
-
 }

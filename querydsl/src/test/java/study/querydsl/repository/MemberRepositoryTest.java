@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static study.querydsl.entity.QMember.member;
 
 @SpringBootTest
 @Transactional
@@ -26,7 +27,7 @@ class MemberRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
 
-//    @Test
+    //    @Test
     public void basicTest() {
         Member member = new Member("member1", 10);
         memberRepository.save(member);
@@ -42,7 +43,7 @@ class MemberRepositoryTest {
 
     }
 
-//    @Test
+    //    @Test
     void searchTest() {
 
         Team teamA = new Team("teamA");
@@ -68,7 +69,7 @@ class MemberRepositoryTest {
 
     }
 
-    @Test
+    //    @Test
     void searchPageImpl() {
         Team teamA = new Team("teamA");
         Team teamB = new Team("teamB");
@@ -90,8 +91,13 @@ class MemberRepositoryTest {
 
         assertThat(result.getSize()).isEqualTo(3);
         assertThat(result.getContent()).extracting("username").containsExactly("member1", "member2", "member3");
-
-
     }
 
+    @Test
+    void querydslPredicateExecutor() {
+        Iterable<Member> result = memberRepository.findAll(member.age.between(10, 40).and(member.username.eq("member1")));
+        for (Member member1 : result) {
+            System.out.println("member1 = " + member1);
+        }
+    }
 }

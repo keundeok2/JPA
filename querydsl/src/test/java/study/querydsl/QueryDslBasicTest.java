@@ -4,32 +4,22 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
-
-import static com.querydsl.jpa.JPAExpressions.select;
-import static com.querydsl.jpa.impl.JPAQueryFactory.*;
-import static org.assertj.core.api.Assertions.*;
-
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.dto.MemberDto;
 import study.querydsl.dto.QMemberDto;
 import study.querydsl.dto.UserDto;
 import study.querydsl.entity.Member;
-import static study.querydsl.entity.QMember.*;
-import static study.querydsl.entity.QTeam.team;
-
 import study.querydsl.entity.QMember;
 import study.querydsl.entity.Team;
 
@@ -37,6 +27,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import java.util.List;
+
+import static com.querydsl.jpa.JPAExpressions.select;
+import static org.assertj.core.api.Assertions.assertThat;
+import static study.querydsl.entity.QMember.member;
+import static study.querydsl.entity.QTeam.team;
 
 @SpringBootTest
 @Transactional
@@ -801,7 +796,7 @@ public class QueryDslBasicTest {
         for (String s : result2) {
             System.out.println("s = " + s);
         }
-    }
 
+    }
 
 }
